@@ -1,0 +1,8 @@
+{
+    "disettings": {
+          "IAuthorsService":  {
+              "interface" : "VueMvc.Service.IAuthorsService",
+              "extend" : "VueMvc.Service.AuthorsService"
+          }
+      }
+}
