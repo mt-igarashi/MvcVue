@@ -10,6 +10,8 @@ namespace VueMvc.Filter {
 
     /// <summary>
     /// トランザクションフィルター
+    /// 例外発生時、または、エラーメッセージがある場合はロールバックを行います。
+    /// それ以外の場合はトランザクションをコミットします。
     /// </summary>
     public class TransactionFilter : IAsyncActionFilter, IOrderedFilter
     {

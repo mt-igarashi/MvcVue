@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VueMvc.Filter;
 using VueMvc.Models;
+using VueMvc.Result;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace VueMvc
 {
@@ -65,7 +67,15 @@ namespace VueMvc
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler(exceptionHandlerApp =>
+                {
+                    exceptionHandlerApp.Run(async context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                        context.Response.ContentType = Text.Plain;
+                        await context.Response.WriteAsync("An exception was thrown.");
+                    });
+                });
                 app.UseHsts();
             }
 
@@ -73,12 +83,7 @@ namespace VueMvc
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
         }
 
         /// <summary>

@@ -13,6 +13,10 @@ namespace VueMvc.Controllers
 {
     /// <summary>
     /// 著者コントローラ
+    /// このクラスではDIによるサービスのインジェクションを行い処理を委譲しています。
+    /// DIの登録処理は、Startup.csを参照してください。
+    /// また映画テーブルでは楽観ロックが出来ないためしていませんが、ここでは対象としています。
+    /// AuthorクラスのConcurrencyCheck属性がついているのが楽観ロックの対象です。
     /// </summary>
     [Route("authors")]
     [ApiController]

@@ -6,6 +6,8 @@ namespace VueMvc.Result
 {
     /// <summary>
     /// API実行結果
+    /// クライアント側で判断できるように楽観ロックエラー、
+    /// データが削除済みであるかを返却します。
     /// </summary>
     /// <typeparam name="T">型</typeparam>
     public class ApiResult<T>
