@@ -45,7 +45,6 @@ namespace VueMvc.Controllers
         [Route("search")]
         public async Task<ActionResult<ApiResult<MovieGenreViewModel>>> Search(string movieGenre, string searchString, int pageNumber = 0, int pageSize = 5)
         {
-            throw new Exception();
             IQueryable<string> genreQuery = from m in _context.Movie
                                             orderby m.Genre
                                             select m.Genre;
