@@ -44,7 +44,7 @@ namespace VueMvc.Result
         /// <summary>
         /// エラーメッセージ
         /// </summary>
-        public List<ErrorMessage> ErrorMesages { get; set; } = new List<ErrorMessage>();
+        public List<ErrorMessage> ErrorMessages { get; set; } = new List<ErrorMessage>();
 
         /// <summary>
         /// 楽観ロックエラー存在フラグ
@@ -53,7 +53,7 @@ namespace VueMvc.Result
         {
             get
             {
-                return ErrorMesages.Any(e => e.MessageType == MessageType.OptimisticError);
+                return ErrorMessages.Any(e => e.MessageType == MessageType.OptimisticError);
             }
         }
 
@@ -64,7 +64,7 @@ namespace VueMvc.Result
         {
             get
             {
-                return ErrorMesages.Any(e => e.MessageType == MessageType.DeletionError);
+                return ErrorMessages.Any(e => e.MessageType == MessageType.DeletionError);
             }
         }
 
@@ -83,7 +83,7 @@ namespace VueMvc.Result
         /// <param name="message">メッセージ</param>
         public void AddErrorMessage(string message)
         {
-            ErrorMesages.Add(new ErrorMessage(message, MessageType.Default));
+            ErrorMessages.Add(new ErrorMessage(message, MessageType.Default));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace VueMvc.Result
         /// <param name="message">メッセージ</param>
         public void AddOptimisticErrorMessage(string message)
         {
-            ErrorMesages.Add(new ErrorMessage(message, MessageType.OptimisticError));
+            ErrorMessages.Add(new ErrorMessage(message, MessageType.OptimisticError));
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace VueMvc.Result
         /// <param name="message">メッセージ</param>
         public void AddDeletionErrorMessage(string message)
         {
-            ErrorMesages.Add(new ErrorMessage(message, MessageType.DeletionError));
+            ErrorMessages.Add(new ErrorMessage(message, MessageType.DeletionError));
         }
     }
 }

@@ -91,7 +91,7 @@ namespace VueMvc.Controllers
                     .FirstOrDefaultAsync(m => m.ID == id);
             if (movie == null)
             {
-                result.AddDeletionErrorMessage("対象の著者は既に削除されています");
+                result.AddDeletionErrorMessage("対象の映画は既に削除されています");
                 return result;
             }
 
