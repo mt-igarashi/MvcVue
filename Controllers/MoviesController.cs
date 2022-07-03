@@ -16,6 +16,9 @@ namespace VueMvc.Controllers
     /// このクラスではDIによるサービスのインジェクションを行わず
     /// 直接処理を記述しています。
     /// DIのサンプルはAuthorsControllerクラスを参照してください。
+    /// 未ハンドルの例外処理については、Startup.csのUseExceptionHandlerで
+    /// しょりをおこなっており、HttpステータスをInternalServerErrorで返却します。
+    /// クライアント側で、axiosを使っている場合catch節で例外処理をすることなります。
     /// </summary>
     [Route("movies")]
     [ApiController]
