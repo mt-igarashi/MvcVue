@@ -73,18 +73,25 @@ namespace VueMvc.Controllers
 
             // ページングのため、selectでの取得開始位置を設定
             int offset = pageNumber * pageSize;
+            int total = await movies.CountAsync();
             // CountAsyncを呼び出した時点でcountのSQLが発行される
             // 条件は追加したジャンル、タイトルと同じになる
-            // select count(*) from movie 
-            // select count(*) from movie where genre=... > 0
-            // select count(*) from movie where instr(title, ...) > 0
-            // select count(*) from movie where genre=... and instr(title, ...) > 0
-            // Containsメソッドを呼ぶと
-            // SQLiteなのでinstrだが、ない場合はlike '%...%'になると思われる
+            // Containsメソッドを呼ぶとSQLiteなのでinstrだが似たような関数がない場合はlike '%...%'になる
             // StartsWithメソッドで '%...'、EndsWithメソッドで'...%'の条件になる
+            // いずれにしてもSQLはログ出力されるので必ず確認をする
+            // ログでは以下のようにSQLが出力される
+            // SELECT "m"."ID", "m"."Genre", "m"."Price", "m"."Rating", "m"."ReleaseDate", "m"."Title"
+            // FROM "Movie" AS "m"
+            // WHERE ("m"."Genre" = @__movieGenre_0) AND ((@__searchString_1 = '') OR (instr("m"."Title", @__searchString_1) > 0))
+            // LIMIT @__p_3 OFFSET @__p_2
             // 上記だとAND条件になってしまうため、細かく制御したいなら下記のように記述する
-            // movies = movies.Where(x => x.Genre == movieGenre || x.Title.Contains(searchString));
-            int total = await movies.CountAsync();
+            // movies = movies.Where(x => (String.IsNullOrEmpty(x.Genre) || x.Genre == movieGenre) 
+            //                             || (x.Title.Contains(searchString) || x.Genre == "Action"));
+            // SELECT "m"."ID", "m"."Genre", "m"."Price", "m"."Rating", "m"."ReleaseDate", "m"."Title"
+            // FROM "Movie" AS "m"
+            // WHERE (("m"."Genre" = '') OR ("m"."Genre" = @__movieGenre_0)) OR
+            //       (((@__searchString_1 = '') OR (instr("m"."Title", @__searchString_1) > 0)) OR ("m"."Genre" = 'Action'))
+            // LIMIT @__p_3 OFFSET @__p_2
 
             // 映画総件数がページングでのサイズより小さい場合はリストを初期化
             if (total < (pageNumber * pageSize)) {
@@ -92,7 +99,7 @@ namespace VueMvc.Controllers
             } else {
                 // ToListAsyncを呼び出したタイミングでSQLが発行される
                 // select... from movie where... Limit pageSize Offset offset
-                // 条件はcountの場合と同様
+                // 条件はcountの例と同様
                 // 外部結合の例はAuthorsServiceを参照
                 movieGenreVM.Movies = await movies.Skip(offset).Take(pageSize).ToListAsync();
             }
