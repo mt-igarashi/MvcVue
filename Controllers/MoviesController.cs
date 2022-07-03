@@ -126,6 +126,11 @@ namespace VueMvc.Controllers
         public async Task<ActionResult<ApiResult<bool>>> Create([Bind("ID,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
         {
             var result = new ApiResult<bool>();
+
+            // 属性による自動検証結果がfalseの場合はエラーを返却する
+            // 属性の詳細はMovieクラスを参照
+            // 基本的にクライアント側と同様のバリデーションを行うので
+            // 冗長なのでここではエラーのみ返却する
             if (!ModelState.IsValid)
             {
                 result.AddErrorMessage("不正なリクエストが送信されました");
