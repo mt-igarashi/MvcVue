@@ -68,7 +68,7 @@ namespace VueMvc.Controllers
 
             // タイトルが指定されている場合は、Queryに条件を追加する
             if (!String.IsNullOrEmpty(searchString)) {
-                movies = movies.Where(s => s.Title.StartsWith(searchString));
+                movies = movies.Where(s => s.Title.Contains(searchString));
             }
 
             // ページングのため、selectでの取得開始位置を設定
