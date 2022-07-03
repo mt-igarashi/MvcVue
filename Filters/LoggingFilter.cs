@@ -45,13 +45,13 @@ namespace VueMvc.Filter {
             
             var resultContext = await next();
 
-            if (resultContext.Exception != null) {
+            if (resultContext.Exception is not null) {
                 _logger.LogError(resultContext.Exception, "exception occured. while executing resuest.");
             }
             else
             {
                 var result = resultContext.Result as ObjectResult;
-                if (result != null)
+                if (result is not null)
                 {
                     _logger.LogInformation("response : {response}", result.Value.ToFormattedString());
                 }

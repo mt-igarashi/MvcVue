@@ -59,6 +59,8 @@ namespace VueMvc.Controllers
 
         /// <summary>
         /// 著者を更新します。
+        /// Bind属性でBindする対象プロパティを制限しています。
+        /// その必要がない場合は指定する必要はありません。
         /// </summary>
         /// <param name="author">著者</param>
         /// <returns>実行結果</returns>
@@ -73,10 +75,8 @@ namespace VueMvc.Controllers
                 result.AddErrorMessage("不正なリクエストが送信されました");
                 return result;
             }
-            else
-            {
-                return await _service.UpdateAuthor(author);
-            }
+            
+            return await _service.UpdateAuthor(author);
         }
     }
 }

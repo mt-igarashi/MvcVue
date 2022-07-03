@@ -13,8 +13,8 @@ namespace VueMvc.Controllers
 {
     /// <summary>
     /// 映画コントローラ
-    /// このクラスではDIによるサービスのインジェクションを
-    /// 行わず、直接処理を記述しています。
+    /// このクラスではDIによるサービスのインジェクションを行わず
+    /// 直接処理を記述しています。
     /// DIのサンプルはAuthorsControllerクラスを参照してください。
     /// </summary>
     [Route("movies")]
@@ -45,29 +45,40 @@ namespace VueMvc.Controllers
         [Route("search")]
         public async Task<ActionResult<ApiResult<MovieGenreViewModel>>> Search(string movieGenre, string searchString, int pageNumber = 0, int pageSize = 5)
         {
+            var movieGenreVM = new MovieGenreViewModel();
+
+            // ジャンルテーブルをselectするQueryを生成
             IQueryable<string> genreQuery = from m in _context.Movie
                                             orderby m.Genre
                                             select m.Genre;
 
+            // ToListAsyncを呼び出したタイミングでSQLが発行される
+            movieGenreVM.Genres = await genreQuery.Distinct().ToListAsync();
+
+            // 映画テーブルをselectするQueryを生成
             var movies = from m in _context.Movie
                          select m;
             
-            if (!String.IsNullOrEmpty(searchString)) {
-                movies = movies.Where(s => s.Title.Contains(searchString));
-            }
-
+            // ジャンルが指定されている場合は、Queryに条件を追加する
             if (!String.IsNullOrEmpty(movieGenre)) {
                 movies = movies.Where(x => x.Genre == movieGenre);
             }
 
-            var movieGenreVM = new MovieGenreViewModel();
-            movieGenreVM.Genres = await genreQuery.Distinct().ToListAsync();
+            // タイトルが指定されている場合は、Queryに条件を追加する
+            if (!String.IsNullOrEmpty(searchString)) {
+                movies = movies.Where(s => s.Title.Contains(searchString));
+            }
 
+            // ページングのため、selectでの取得開始位置を設定
             int offset = pageNumber * pageSize;
-            int total = await movies.CountAsync();
-            if (movies.Count() < (pageNumber * pageSize)) {
+            int total = await movies.CountAsync();  // CountAsyncを呼び出した時点でcountのSQLが発行される
+
+            // 映画総件数がページングでのサイズより小さい場合はリストを初期化
+            if (total < (pageNumber * pageSize)) {
                 movieGenreVM.Movies = new();
             } else {
+                // ToListAsyncを呼び出したタイミングでSQLが発行される
+                // select... from movie where genre=... and title=... Limit ofsset pageSize
                 movieGenreVM.Movies = await movies.Skip(offset).Take(pageSize).ToListAsync();
             }
             movieGenreVM.TotalCount = total;
@@ -90,6 +101,7 @@ namespace VueMvc.Controllers
                 return result;
             }
 
+            // FirstOrDefaultでレコードがない場合は、nullを返却するように指定
             var movie = await _context.Movie
                     .FirstOrDefaultAsync(m => m.ID == id);
             if (movie == null)
@@ -103,6 +115,8 @@ namespace VueMvc.Controllers
 
         /// <summary>
         /// 映画を登録します。
+        /// Bind属性でBindする対象プロパティを制限しています。
+        /// その必要がない場合は指定する必要はありません。
         /// </summary>
         /// <param name="movie">映画モデル</param>
         /// <returns>メッセージ</returns>
@@ -117,19 +131,19 @@ namespace VueMvc.Controllers
                 result.AddErrorMessage("不正なリクエストが送信されました");
                 return result;
             }
-            else
-            {
-                _context.Add(movie);
-                await _context.SaveChangesAsync();
+            
+            _context.Add(movie);
+            await _context.SaveChangesAsync();
 
-                result.Result = true;
-                result.AddSuccessMessage("登録に成功しました");
-                return result;
-            }
+            result.Result = true;
+            result.AddSuccessMessage("登録に成功しました");
+            return result;
         }
 
         /// <summary>
         /// 映画を更新します。
+        /// Bind属性でBindする対象プロパティを制限しています。
+        /// その必要がない場合は指定する必要はありません。
         /// </summary>
         /// <param name="id">ID</param>
         /// <param name="movie">映画モデル</param>
@@ -145,31 +159,26 @@ namespace VueMvc.Controllers
                 result.AddErrorMessage("不正なリクエストが送信されました");
                 return result;
             }
-            else
-            {
-                try
-                {
-                    _context.Update(movie);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MovieExists(movie.ID))
-                    {
-                        result.AddDeletionErrorMessage("対象の映画は既に削除されています");
-                        return result;
-                    }
-                    else
-                    {
-                        result.AddOptimisticErrorMessage("対象の映画は既に更新されています。再度処理を実行してください");
-                        return result;
-                    }
-                }
 
-                result.Result = true;
-                result.AddSuccessMessage("更新に成功しました");
+            try
+            {
+                _context.Update(movie);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MovieExists(movie.ID))
+                {
+                    result.AddDeletionErrorMessage("対象の映画は既に削除されています");
+                    return result;
+                }
+                result.AddOptimisticErrorMessage("対象の映画は既に更新されています。再度処理を実行してください");
                 return result;
             }
+
+            result.Result = true;
+            result.AddSuccessMessage("更新に成功しました");
+            return result;
         }
 
         /// <summary>

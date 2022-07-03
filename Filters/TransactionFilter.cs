@@ -44,7 +44,7 @@ namespace VueMvc.Filter {
             using(IDbContextTransaction tran = await _context.Database.BeginTransactionAsync())
             {
                 var resultContext = await next();                
-                if (resultContext.Exception != null || GetErrorMessages(resultContext.Result).Count > 0)
+                if (resultContext.Exception is not null || GetErrorMessages(resultContext.Result).Count > 0)
                 {
                     tran.Rollback();
                 }
@@ -64,7 +64,7 @@ namespace VueMvc.Filter {
         {
             var objectResult = obj as ObjectResult;
             var messages = new List<ErrorMessage>();
-            if (objectResult == null || objectResult.Value == null)
+            if (objectResult is null || objectResult.Value is null)
             {
                 return messages;
             }

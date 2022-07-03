@@ -84,7 +84,7 @@ namespace VueMvc.Logs
         /// <returns></returns>
         private static bool IsConcreteClassOf(this Type type, Type target)
         {
-            if (type ==null || target == null) {
+            if (type is null || target is null) {
                 return false;
             }
 
@@ -115,7 +115,7 @@ namespace VueMvc.Logs
         /// <typeparam name="T">型</typeparam>
         /// <returns>文字列</returns>
         private static string ToStringEntities<T>(this T obj, int depth = 1) {
-            if (obj == null) {
+            if (obj is null) {
                 return "null";
             }
 
@@ -163,7 +163,7 @@ namespace VueMvc.Logs
         /// <returns>文字列</returns>
         public static string ToFormattedString<T>(this T obj, int depth = 1)
         {
-            if (obj == null) {
+            if (obj is null) {
                 return "null";
             }
 

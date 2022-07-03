@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +31,10 @@ namespace VueMvc.Service {
         /// <summary>
         /// 著者一覧を取得します。
         /// </summary>
-        /// <returns>著者リスト10</returns>
+        /// <returns>著者リスト</returns>
         public async Task<ApiResult<List<AuthorEntity>>> GetAuthors()
         {
+            // 映画に紐付く著者がない場合も表示するため、DefaultIfEmptyで外部結合にする
             var authors = from movie in _context.Movie
                           join author in _context.Author
                           on movie.ID equals author.MovieID into ma
@@ -46,6 +46,7 @@ namespace VueMvc.Service {
                                                     Age = subauthor.Age };
 
             var result = new ApiResult<List<AuthorEntity>>();
+            // ToListAsyncを呼び出したタイミングでSQLが発行される
             result.Result = await authors.ToListAsync();
 
             return result;
@@ -65,6 +66,8 @@ namespace VueMvc.Service {
                 return result;
             }
             
+            // 外部キーに紐付く映画テーブルを取得するため、Includeで指定する
+            // FirstOrDefaultAsyncを呼び出すことでSQLが発行される
             var author = await _context.Author
                 .Include(a => a.Movie)
                 .FirstOrDefaultAsync(a => a.ID == id);
@@ -93,6 +96,7 @@ namespace VueMvc.Service {
                 return result;
             }
 
+            // FindAsyncを呼び出すことでSQLが発行される
             var author = await _context.Author.FindAsync(id);
             if (author == null)
             {
