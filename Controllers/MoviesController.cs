@@ -82,6 +82,8 @@ namespace VueMvc.Controllers
             // Containsメソッドを呼ぶと
             // SQLiteなのでinstrだが、ない場合はlike '%...%'になると思われる
             // StartsWithメソッドで '%...'、EndsWithメソッドで'...%'の条件になる
+            // 上記だとAND条件になってしまうため、細かく制御したいなら下記のように記述する
+            // movies = movies.Where(x => x.Genre == movieGenre || x.Title.Contains(searchString));
             int total = await movies.CountAsync();
 
             // 映画総件数がページングでのサイズより小さい場合はリストを初期化
