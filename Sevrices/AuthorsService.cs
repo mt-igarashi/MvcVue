@@ -35,6 +35,8 @@ namespace VueMvc.Service {
         public async Task<ApiResult<List<AuthorEntity>>> GetAuthors()
         {
             // 映画に紐付く著者がない場合も表示するため、DefaultIfEmptyで外部結合にする
+            // DefaultIfEmptyを呼び出さない場合は内部結合になる
+            // (from subauthor in ma.DefaultIfEmpty()の記述を削除する)
             var authors = from movie in _context.Movie
                           join author in _context.Author
                           on movie.ID equals author.MovieID into ma

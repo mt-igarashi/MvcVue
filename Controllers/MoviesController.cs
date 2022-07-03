@@ -47,12 +47,14 @@ namespace VueMvc.Controllers
         {
             var movieGenreVM = new MovieGenreViewModel();
 
-            // ジャンルテーブルをselectするQueryを生成
+            // 映画テーブルのジャンルをselectするQueryを生成
             IQueryable<string> genreQuery = from m in _context.Movie
                                             orderby m.Genre
                                             select m.Genre;
 
             // ToListAsyncを呼び出したタイミングでSQLが発行される
+            // Distinctメソッドを呼ぶとselectにdistinctが追加される
+            // select distinct genre from movie 
             movieGenreVM.Genres = await genreQuery.Distinct().ToListAsync();
 
             // 映画テーブルをselectするQueryを生成
@@ -66,19 +68,30 @@ namespace VueMvc.Controllers
 
             // タイトルが指定されている場合は、Queryに条件を追加する
             if (!String.IsNullOrEmpty(searchString)) {
-                movies = movies.Where(s => s.Title.Contains(searchString));
+                movies = movies.Where(s => s.Title.StartsWith(searchString));
             }
 
             // ページングのため、selectでの取得開始位置を設定
             int offset = pageNumber * pageSize;
-            int total = await movies.CountAsync();  // CountAsyncを呼び出した時点でcountのSQLが発行される
+            // CountAsyncを呼び出した時点でcountのSQLが発行される
+            // 条件は追加したジャンル、タイトルと同じになる
+            // select count(*) from movie 
+            // select count(*) from movie where genre=... > 0
+            // select count(*) from movie where instr(title, ...) > 0
+            // select count(*) from movie where genre=... and instr(title, ...) > 0
+            // Containsメソッドを呼ぶと
+            // SQLiteなのでinstrだが、ない場合はlike '%...%'になると思われる
+            // StartsWithメソッドで '%...'、EndsWithメソッドで'...%'の条件になる
+            int total = await movies.CountAsync();
 
             // 映画総件数がページングでのサイズより小さい場合はリストを初期化
             if (total < (pageNumber * pageSize)) {
                 movieGenreVM.Movies = new();
             } else {
                 // ToListAsyncを呼び出したタイミングでSQLが発行される
-                // select... from movie where genre=... and title=... Limit ofsset pageSize
+                // select... from movie where... Limit pageSize Offset offset
+                // 条件はcountの場合と同様
+                // 外部結合の例はAuthorsServiceを参照
                 movieGenreVM.Movies = await movies.Skip(offset).Take(pageSize).ToListAsync();
             }
             movieGenreVM.TotalCount = total;
