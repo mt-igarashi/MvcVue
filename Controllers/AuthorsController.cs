@@ -19,7 +19,7 @@ namespace VueMvc.Controllers
     /// AuthorクラスのConcurrencyCheck属性がついているのが楽観ロックの対象です。
     /// 未ハンドルの例外処理については、Startup.csのUseExceptionHandlerで
     /// しょりをおこなっており、HttpステータスをInternalServerErrorで返却します。
-    /// クライアント側でaxiosを使っている場合、catch節で例外処理をすることなります。
+    /// クライアント側でaxiosを使っている場合、catch節で例外処理をすることになります。
     /// </summary>
     [Route("authors")]
     [ApiController]
