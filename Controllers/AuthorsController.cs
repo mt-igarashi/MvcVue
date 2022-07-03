@@ -18,7 +18,7 @@ namespace VueMvc.Controllers
     /// また映画テーブルでは楽観ロックが出来ないためしていませんが、ここでは対象としています。
     /// AuthorクラスのConcurrencyCheck属性がついているのが楽観ロックの対象です。
     /// 未ハンドルの例外処理については、Startup.csのUseExceptionHandlerで
-    /// しょりをおこなっており、HttpステータスをInternalServerErrorで返却します。
+    /// 処理をおこなっており、HttpステータスをInternalServerErrorで返却します。
     /// クライアント側でaxiosを使っている場合、catch節で例外処理をすることになります。
     /// </summary>
     [Route("authors")]

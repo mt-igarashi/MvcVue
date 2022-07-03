@@ -17,7 +17,7 @@ namespace VueMvc.Controllers
     /// 直接処理を記述しています。
     /// DIのサンプルはAuthorsControllerクラスを参照してください。
     /// 未ハンドルの例外処理については、Startup.csのUseExceptionHandlerで
-    /// しょりをおこなっており、HttpステータスをInternalServerErrorで返却します。
+    /// 処理をおこなっており、HttpステータスをInternalServerErrorで返却します。
     /// クライアント側でaxiosを使っている場合、catch節で例外処理をすることになります。
     /// </summary>
     [Route("movies")]
