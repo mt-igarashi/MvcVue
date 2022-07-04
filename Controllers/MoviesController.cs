@@ -16,6 +16,8 @@ namespace VueMvc.Controllers
     /// このクラスではDIによるサービスのインジェクションを行わず
     /// 直接処理を記述しています。
     /// DIのサンプルはAuthorsControllerクラスを参照してください。
+    /// 
+    /// トランザクションの管理は、TransactionFilterクラスで行っています。
     /// 未ハンドルの例外処理については、Startup.csのUseExceptionHandlerで
     /// 処理をおこなっており、HttpステータスをInternalServerErrorで返却します。
     /// クライアント側でaxiosを使っている場合、catch節で例外処理をすることになります。
@@ -81,6 +83,7 @@ namespace VueMvc.Controllers
             // 条件は追加したジャンル、タイトルと同じになる
             // Containsメソッドを呼ぶとSQLiteなのでinstrだが似たような関数がない場合はlike '%...%'になる
             // StartsWithメソッドで '%...'、EndsWithメソッドで'...%'の条件になる
+            
             // いずれにしてもSQLはログ出力されるので必ず確認をする
             // ログでは以下のようにSQLが出力される
             // SELECT "m"."ID", "m"."Genre", "m"."Price", "m"."Rating", "m"."ReleaseDate", "m"."Title"

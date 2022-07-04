@@ -13,10 +13,14 @@ namespace VueMvc.Controllers
 {
     /// <summary>
     /// 著者コントローラ
+    /// 
     /// このクラスではDIによるサービスのインジェクションを行い処理を委譲しています。
     /// DIの登録処理は、Startup.csを参照してください。
+    /// トランザクションの管理は、TransactionFilterクラスで行っています。
+    /// 
     /// また映画テーブルでは楽観ロックが出来ないためしていませんが、ここでは対象としています。
     /// AuthorクラスのConcurrencyCheck属性がついているのが楽観ロックの対象です。
+    /// 
     /// 未ハンドルの例外処理については、Startup.csのUseExceptionHandlerで
     /// 処理をおこなっており、HttpステータスをInternalServerErrorで返却します。
     /// クライアント側でaxiosを使っている場合、catch節で例外処理をすることになります。
