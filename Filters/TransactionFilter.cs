@@ -73,11 +73,12 @@ namespace VueMvc.Filter {
             {
                 var type = objectResult.Value.GetType();
                 var prop = type.GetProperty(nameof(ApiResult<object>.ErrorMessages));
+                if (prop == null) {
+                    return messages;
+                }
 
                 var errors = prop.GetValue(objectResult.Value) as List<ErrorMessage>;
-                messages = errors ?? messages;
-
-                return messages;
+                return errors ?? messages;
             }
             catch
             {

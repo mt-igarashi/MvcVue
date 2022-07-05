@@ -98,7 +98,8 @@ namespace VueMvc.Service {
                 return result;
             }
 
-            // FindAsyncを呼び出すことでSQLが発行される
+            // FirstOrDefaultを呼び出したタイミングでSQLが発行される
+            // レコードがない場合は、nullを返却する
             var author = await _context.Author.FindAsync(id);
             if (author == null)
             {
@@ -135,6 +136,9 @@ namespace VueMvc.Service {
             }
             catch (DbUpdateConcurrencyException)
             {
+                // ここではクライアント側で削除エラー、楽観ロックエラーを判断できるようにしています
+                // 返却するjsonでは通常のエラーメッセージと変わらないが、
+                // 削除エラー存在フラグ、楽観ロックエラー存在フラグがtrueで返却される
                 if (!_context.Author.Any(e => e.ID == author.ID))
                 {
                     result.AddDeletionErrorMessage("対象の著者は既に既に削除されています");

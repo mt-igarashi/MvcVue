@@ -80,7 +80,7 @@ namespace VueMvc.Controllers
             int offset = pageNumber * pageSize;
             int total = await movies.CountAsync();
             // CountAsyncを呼び出した時点でcountのSQLが発行される
-            // 条件は追加したジャンル、タイトルと同じになる
+            // 条件はWheremメソッドで追加したジャンル、タイトルと同じになる
             // Containsメソッドを呼ぶとSQLiteなのでinstrだが似たような関数がない場合はlike '%...%'になる
             // StartsWithメソッドで '%...'、EndsWithメソッドで'...%'の条件になる
             
@@ -129,7 +129,8 @@ namespace VueMvc.Controllers
                 return result;
             }
 
-            // FirstOrDefaultでレコードがない場合は、nullを返却するように指定
+            // FirstOrDefaultを呼び出したタイミングでSQLが発行される
+            // レコードがない場合は、nullを返却する
             var movie = await _context.Movie
                     .FirstOrDefaultAsync(m => m.ID == id);
             if (movie == null)
@@ -158,7 +159,7 @@ namespace VueMvc.Controllers
             // 属性による自動検証結果がfalseの場合はエラーを返却する
             // 属性の詳細はMovieクラスを参照
             // 基本的にクライアント側と同様のバリデーションを行うので
-            // 冗長なのでここではエラーのみ返却する
+            // 冗長なためここではエラーのみ返却する
             if (!ModelState.IsValid)
             {
                 result.AddErrorMessage("不正なリクエストが送信されました");

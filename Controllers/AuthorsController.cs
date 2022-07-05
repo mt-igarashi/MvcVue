@@ -79,7 +79,7 @@ namespace VueMvc.Controllers
             // 属性による自動検証結果がfalseの場合はエラーを返却する
             // 属性の詳細はAuthorクラスを参照
             // 基本的にクライアント側と同様のバリデーションを行うので
-            // 冗長なのでここではエラーのみ返却する
+            // 冗長なためここではエラーのみ返却する
             if (!ModelState.IsValid)
             {
                 var result = new ApiResult<bool>();
